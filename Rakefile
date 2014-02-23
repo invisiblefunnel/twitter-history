@@ -20,8 +20,8 @@ task default: :dotenv do
   Logger.new(STDOUT).info('Checking for diffs')
 
   followers = TwitterClient.followers(count: 1000).to_a.map(&:screen_name)
-  GitHubUpsert.execute GitHubClient, REPO, 'followers', followers.join("\n")
+  GitHubUpsert.execute GitHubClient, REPO, 'followers', followers.join("\n")+"\n"
 
   following = TwitterClient.following(count: 1000).to_a.map(&:screen_name)
-  GitHubUpsert.execute GitHubClient, REPO, 'following', following.join("\n")
+  GitHubUpsert.execute GitHubClient, REPO, 'following', following.join("\n")+"\n"
 end
