@@ -1,6 +1,7 @@
 require 'dotenv/tasks'
 
 task default: :dotenv do
+  require './content_list'
   require './github_upsert'
   require 'logger'
   require 'octokit'
@@ -19,9 +20,17 @@ task default: :dotenv do
 
   Logger.new(STDOUT).info('Checking for diffs')
 
-  followers = TwitterClient.followers(count: 1000).to_a.map(&:screen_name)
-  GitHubUpsert.execute GitHubClient, REPO, 'followers', followers.join("\n")+"\n"
+  GitHubUpsert.execute(
+    GitHubClient,
+    REPO,
+    'followers',
+    ContentList.new { TwitterClient.followers(count: 1000).to_a.map(&:screen_name) }
+  )
 
-  following = TwitterClient.following(count: 1000).to_a.map(&:screen_name)
-  GitHubUpsert.execute GitHubClient, REPO, 'following', following.join("\n")+"\n"
+  GitHubUpsert.execute(
+    GitHubClient,
+    REPO,
+    'following',
+    ContentList.new { TwitterClient.following(count: 1000).to_a.map(&:screen_name) }
+  )
 end

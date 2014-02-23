@@ -9,6 +9,10 @@ class GitHubUpsert < Struct.new(:client, :repo_name, :filename, :content)
     new(*args).execute
   end
 
+  def initialize(client, repo_name, filename, content)
+    super(client, repo_name, filename, content.to_s)
+  end
+
   def execute
     if exists?
       update! if changed?
