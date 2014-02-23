@@ -4,13 +4,18 @@ require 'memoizable'
 
 class GitHubUpsert < Struct.new(:client, :repo_name, :filename, :content)
   include Memoizable
+  NEWLINE = "\n".freeze
 
-  def self.execute(*args)
-    new(*args).execute
+  def self.execute(*args, &block)
+    new(*args, &block).execute
   end
 
-  def initialize(client, repo_name, filename, content)
-    super(client, repo_name, filename, content.to_s)
+  def initialize(client, repo_name, filename)
+    # ensure content ends with a newline
+    content = yield
+    content << NEWLINE unless content.end_with?(NEWLINE)
+
+    super(client, repo_name, filename, content)
   end
 
   def execute
