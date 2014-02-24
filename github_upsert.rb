@@ -11,7 +11,9 @@ class GitHubUpsert < Struct.new(:client, :repo_name, :filename, :content)
   end
 
   def initialize(client, repo_name, filename)
-    super(client, repo_name, filename, to_content(yield))
+    content = yield.to_s
+    content << NEWLINE unless content.end_with?(NEWLINE)
+    super(client, repo_name, filename, content)
   end
 
   def execute
@@ -67,10 +69,4 @@ class GitHubUpsert < Struct.new(:client, :repo_name, :filename, :content)
     Logger.new(STDOUT)
   end
   memoize :logger
-
-  def to_content(val)
-    val = val.to_s
-    val << NEWLINE unless val.end_with?(NEWLINE)
-    val
-  end
 end
