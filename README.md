@@ -13,3 +13,9 @@ bundle install
 cp sample.env .env
 ```
 
+### TODO: Finish README
+
+* Creating Twitter and GitHub apps and keys
+* Creating GitHub repo
+* Deploying to Heroku
+* Setting up scheduler add-on
