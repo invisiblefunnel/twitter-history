@@ -16,6 +16,6 @@ cp sample.env .env
 ### TODO: Finish README
 
 * Creating Twitter and GitHub apps and keys
-* Creating GitHub repo
-* Deploying to Heroku
-* Setting up scheduler add-on
+* Creating empty target repo on GitHub
+* Creating Heroku app and setting env vars
+* Deploying and setting up scheduler add-on to run task
