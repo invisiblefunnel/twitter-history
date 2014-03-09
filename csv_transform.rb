@@ -1,5 +1,4 @@
 require 'csv'
-require './github_upsert'
 
 class CSVTransform
   def initialize(*attributes)
@@ -15,7 +14,7 @@ class CSVTransform
       # turn each row into csv data
       map { |row| row.to_csv }.
       # join the rows into one blob
-      join(GitHubUpsert::NEWLINE)
+      join
   end
 
   def row_for(user)
