@@ -36,37 +36,31 @@ class GitHubUpsert < Struct.new(:client, :repo_name, :filename, :content)
     client.add_content(repo_name, filename, message, content)
   end
 
-  def exists?
+  memoize def exists?
     !!file
   end
-  memoize :exists?
 
-  def changed?
+  memoize def changed?
     file[:sha] != sha
   end
-  memoize :changed?
 
-  def file
+  memoize def file
     contents = client.repo(repo_name).rels[:contents].get.data
     contents.find { |file| file[:path] == filename }
   rescue Octokit::NotFound # repo is empty
     nil
   end
-  memoize :file
 
-  def sha
+  memoize def sha
     # see http://git-scm.com/book/en/Git-Internals-Git-Objects#Object-Storage
     Digest::SHA1.hexdigest("blob #{content.size}\0" + content)
   end
-  memoize :sha
 
-  def message
+  memoize def message
     'Update ' + filename
   end
-  memoize :message
 
-  def logger
+  memoize def logger
     Logger.new(STDOUT)
   end
-  memoize :logger
 end
