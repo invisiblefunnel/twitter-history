@@ -1,7 +1,7 @@
 require 'dotenv/tasks'
 
 task default: :dotenv do
-  require './core_ext'
+  require './csv_transform'
   require './github_upsert'
   require 'logger'
   require 'octokit'
@@ -20,13 +20,15 @@ task default: :dotenv do
 
   Logger.new(STDOUT).info('Checking for diffs')
 
-  GitHubUpsert.execute(GitHubClient, REPO, 'followers') do
-    screen_names = TwitterClient.followers(count: 1000).to_a.map(&:screen_name)
-    screen_names.destutter.join(GitHubUpsert::NEWLINE) # remove sequential duplicates and join with newlines
+  ToCSV = CSVTransform.new(:id, :screen_name, :name)
+
+  GitHubUpsert.execute(GitHubClient, REPO, 'followers.csv') do
+    followers = TwitterClient.followers(count: 1000).to_a.uniq(&:id)
+    ToCSV.(followers)
   end
 
-  GitHubUpsert.execute(GitHubClient, REPO, 'following') do
-    screen_names = TwitterClient.following(count: 1000).to_a.map(&:screen_name)
-    screen_names.destutter.join(GitHubUpsert::NEWLINE) # remove sequential duplicates and join with newlines
+  GitHubUpsert.execute(GitHubClient, REPO, 'following.csv') do
+    following = TwitterClient.following(count: 1000).to_a.uniq(&:id)
+    ToCSV.(following)
   end
 end
