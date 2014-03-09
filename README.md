@@ -4,7 +4,7 @@ Track your Twitter followers and followings in a GitHub repository.
 
 ## Local Setup
 
-Clone the repo and install dependencies.
+Clone the repo and install dependencies. Be sure to run Ruby 2.1+.
 
 ```console
 git clone https://github.com/invisiblefunnel/twitter-history.git
