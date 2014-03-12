@@ -7,28 +7,24 @@ task default: :dotenv do
   require 'octokit'
   require 'twitter'
 
-  TwitterClient = Twitter::REST::Client.new do |config|
+  repo = ENV.fetch('HISTORY_REPO')
+  github = Octokit::Client.new(access_token: ENV.fetch('GITHUB_ACCESS_TOKEN'))
+  twitter = Twitter::REST::Client.new do |config|
     config.consumer_key        = ENV.fetch('TWITTER_CONSUMER_KEY')
     config.consumer_secret     = ENV.fetch('TWITTER_CONSUMER_SECRET')
     config.access_token        = ENV.fetch('TWITTER_ACCESS_TOKEN')
     config.access_token_secret = ENV.fetch('TWITTER_ACCESS_TOKEN_SECRET')
   end
 
-  GitHubClient = Octokit::Client.new(access_token: ENV.fetch('GITHUB_ACCESS_TOKEN'))
-
-  REPO = ENV.fetch('HISTORY_REPO')
+  to_csv = CSVTransform.new(:id, :screen_name, :name)
 
   Logger.new(STDOUT).info('Checking for diffs')
 
-  ToCSV = CSVTransform.new(:id, :screen_name, :name)
-
-  GitHubUpsert.execute(GitHubClient, REPO, 'followers.csv') do
-    followers = TwitterClient.followers(count: 1000).to_a.uniq(&:id)
-    ToCSV.(followers)
+  GitHubUpsert.execute(github, repo, 'followers.csv') do
+    to_csv.(twitter.followers(count: 1000).to_a.uniq(&:id))
   end
 
-  GitHubUpsert.execute(GitHubClient, REPO, 'following.csv') do
-    following = TwitterClient.following(count: 1000).to_a.uniq(&:id)
-    ToCSV.(following)
+  GitHubUpsert.execute(github, repo, 'following.csv') do
+    to_csv.(twitter.following(count: 1000).to_a.uniq(&:id))
   end
 end
