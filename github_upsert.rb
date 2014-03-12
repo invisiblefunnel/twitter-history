@@ -49,8 +49,12 @@ class GitHubUpsert < Struct.new(:client, :repo_name, :filename, :content)
   end
 
   memoize def sha
+    # Hacks ahead! For some reason the sha GitHub has for the existing file
+    # is different as a result of the Base64 encode/decode process. This is
+    # a temporary workaround to get the correct answer to #changed?.
+    tmp = Base64.decode64(Base64.encode64(content))
     # see http://git-scm.com/book/en/Git-Internals-Git-Objects#Object-Storage
-    Digest::SHA1.hexdigest("blob #{content.size}\0" + content)
+    Digest::SHA1.hexdigest("blob #{tmp.size}\0" + tmp)
   end
 
   memoize def message
