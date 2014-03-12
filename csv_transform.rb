@@ -7,14 +7,10 @@ class CSVTransform
 
   def call(user_list)
     user_list.
-      # map to array of attributes
-      map { |u| row_for(u) }.
-      # prepend the header row
-      unshift(headers).
-      # turn each row into csv data
-      map { |row| row.to_csv }.
-      # join the rows into one blob
-      join
+      map { |user| row_for(user) }. # map to array of attributes
+      unshift(headers).             # prepend the header row
+      map { |row| row.to_csv }.     # turn each row into csv data
+      join                          # join the rows into one blob
   end
 
   def row_for(user)
