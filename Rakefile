@@ -16,7 +16,8 @@ task default: :dotenv do
     config.access_token_secret = ENV.fetch('TWITTER_ACCESS_TOKEN_SECRET')
   end
 
-  to_csv = CSVTransform.new(:id, :screen_name, :name)
+  to_csv = CSVTransform.new(:id, :screen_name, :name, :statuses_count,
+                            :friends_count, :followers_count, :listed_count)
 
   Logger.new(STDOUT).info('Checking for diffs')
 
