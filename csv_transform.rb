@@ -22,6 +22,6 @@ class CSVTransform
   end
 
   memoize def headers
-    @attributes.map { |attr| attr.to_s.sub('_', ' ') }.to_csv
+    @attributes.map { |attr| attr.to_s.gsub('_', ' ') }.to_csv
   end
 end
